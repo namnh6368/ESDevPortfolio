@@ -1,15 +1,74 @@
 <!-- blogs/post1.html -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../index.css">
-    <title>Blog Post 1</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" type="image/png" href="./images/favicon.png" />
+  
+    <!-- Put your site title here -->
+    <title>
+      Nam Nguyen Hoang | Controller Area Network (CAN).
+    </title>
+  
+    <meta name="description" content="Controller Area Network (CAN).">
+    <!-- Add some coding keywords below, Ex: (React, CSS etc) -->
+    <meta name="keywords" content="CAN" />
+    <link rel="stylesheet" href="./blog.css" />
 </head>
+
 <body>
-    <h1>Blog Post Title</h1>
-    <p>This is the content of the blog post.</p>
-    <a href="../index.html">Back to Portfolio</a> <!-- Link back to your portfolio -->
+
+  <!-- ***** Header ***** -->
+
+  <header class="header" role="banner" id="top">
+    <div class="header__text-box row">
+      <div class="header__text">
+        <h1 class="heading-primary">
+          <span>Controller Area Network (CAN)</span>
+        </h1>
+        <p>Nam Nguyen Hoang.</p>
+        <a href="../index.html" class="btn">Back to Portfolio</a>
+      </div>
+    </div>
+  </header>
+
+  <main role="main">
+    <!-- ***** Overview ***** -->
+
+    <section class="overview" id="overview">
+      <div class="row">
+        <h2>Overview</h2>
+        <div class="work__boxes">
+
+          <!-- Each div with the work__box class is a section. -->
+
+          <div class="work__box">
+            <div class="work__text">
+              <h3>Overview</h3>
+              <p>
+                This is the content of the blog.
+              </p>
+              <ul class="work__list">
+                <li>Protocol</li>
+                <li>AUTOSAR</li>
+                <li>CAN</li>
+              </ul>
+
+              <div class="work__links">
+                <a href="https://www.autosar.org/fileadmin/standards/R22-11/CP/AUTOSAR_SWS_CANDriver.pdf" target="_blank" class="link__text">
+                  Document Title Specification of CAN Driver <span>&rarr;</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
 </body>
 </html>

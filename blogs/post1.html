@@ -16,6 +16,25 @@
     <!-- Add some coding keywords below, Ex: (React, CSS etc) -->
     <meta name="keywords" content="CAN" />
     <link rel="stylesheet" href="./blog.css" />
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+        }
+        h1, h2, h3 {
+            color: #fdfcfc;
+        }
+        blockquote {
+            border-left: 4px solid #ccc;
+            padding-left: 20px;
+            color: #555;
+            font-style: italic;
+        }
+    </style>
+
 </head>
 
 <body>
@@ -34,41 +53,32 @@
     </div>
   </header>
 
-  <main role="main">
-    <!-- ***** Overview ***** -->
-
-    <section class="overview" id="overview">
-      <div class="row">
-        <h2>Overview</h2>
-        <div class="work__boxes">
-
-          <!-- Each div with the work__box class is a section. -->
-
-          <div class="work__box">
-            <div class="work__text">
-              <h3>Overview</h3>
-              <p>
-                This is the content of the blog.
-              </p>
-              <ul class="work__list">
-                <li>Protocol</li>
-                <li>AUTOSAR</li>
-                <li>CAN</li>
-              </ul>
-
-              <div class="work__links">
-                <a href="https://www.autosar.org/fileadmin/standards/R22-11/CP/AUTOSAR_SWS_CANDriver.pdf" target="_blank" class="link__text">
-                  Document Title Specification of CAN Driver <span>&rarr;</span>
-                </a>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </section>
-
-  </main>
-
+  <div id="content"></div>
+  
+  <script>
+    // The Markdown content
+    const markdown = `
+  ## 1. Overview
+  This is an overview of the purpose of using CAN in Automotive domain.
+  
+  ## 2. CAN features
+  
+  ### 2.1. Feature 1
+  ### 2.2. Feature 2
+  
+  ## 3. Can frames
+  
+  ## 4. References
+  - Document Title Specification of CAN Driver [AUTOSAR Spec](https://www.autosar.org/fileadmin/standards/R22-11/CP/AUTOSAR_SWS_CANDriver.pdf)
+  
+  ---
+  
+  > "The only limit to our realization of tomorrow will be our doubts of today." - Franklin D. Roosevelt
+  `;
+  
+    // Convert Markdown to HTML
+    document.getElementById('content').innerHTML = marked.parse(markdown);
+  </script>
+  
 </body>
 </html>

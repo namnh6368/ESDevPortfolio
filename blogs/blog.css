@@ -74,6 +74,14 @@ body {
     line-height: var(--line-height-normal);
     background: var(--black);
     overflow-x: hidden;
+    margin: 40px;
+}
+
+blockquote {
+    border-left: 4px solid #ccc;
+    padding-left: 20px;
+    color: #555;
+    font-style: italic;
 }
 
 .row {
@@ -142,7 +150,7 @@ h3 {
 
 h2 {
     font-size: var(--font-size-large);
-    margin-bottom: var(--gutter-medium);
+    margin-bottom: var(--gutter-small);
 }
 
 h2::after {
@@ -156,7 +164,7 @@ h2::after {
 
 h3 {
     font-size: var(--font-size-medium-1);
-    margin-bottom: var(--gutter-small);
+    margin-bottom: var(--gutter-medium);
 }
 
 @media(max-width: 500px) {

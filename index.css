@@ -468,7 +468,7 @@ body:not(.user-is-tabbing) a:focus {
 }
 
 .work__text {
-    flex: 0 0 30%;
+    flex: 0 0 50%;
 }
 
 .work__list {
@@ -554,7 +554,7 @@ body:not(.user-is-tabbing) a:focus {
 
 @media(min-width: 901px) {
     .about__text {
-        flex: 0 0 45%;
+        flex: 0 0 60%;
     }
     
     .about__photo-container {

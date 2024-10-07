@@ -151,6 +151,7 @@ h3 {
 h2 {
     font-size: var(--font-size-large);
     margin-bottom: var(--gutter-small);
+    margin-top: var(--gutter-small);
 }
 
 h2::after {
@@ -164,7 +165,8 @@ h2::after {
 
 h3 {
     font-size: var(--font-size-medium-1);
-    margin-bottom: var(--gutter-medium);
+    margin-bottom: var(--gutter-small);
+    margin-top: var(--gutter-small);
 }
 
 @media(max-width: 500px) {

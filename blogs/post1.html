@@ -44,22 +44,62 @@
     const markdown = `
   ## 1. Overview
   ![CAN bus (consisting of two wires, CAN low and CAN high)](./images/intro.png)  
+  *CAN bus (consisting of two wires, CAN low and CAN high)*
 
-  The CAN bus system enables each ECU to communicate with all other ECUs - without complex dedicated wiring.
+  The CAN bus system enables each ECU to communicate with all other ECUs - without complex dedicated wiring.  
+  The CAN High (CAN_H) and CAN Low (CAN_L) lines are twisted together to reduce electromagnetic interference (EMI) or noise.
+
+  ![CAN in the 7-layer OSI model](./images/can_osi_layer.png)  
+  *CAN in the 7-layer OSI model*
+
+  The controller area network is described by a data link layer and physical layer (in the 7-layer OSI model).
+  - Baud rate: CAN nodes must be connected via a two wire bus with baud rates up to 1 Mbit/s (Classical CAN) or 5 Mbit/s (CAN FD)
+  - Cable length: Maximal CAN cable lengths should be between 500 meters (125 kbit/s) and 40 meters (1 Mbit/s)
+  - Termination: The CAN bus must be properly terminated using a **120 Ohms CAN bus termination resistor** at each end of the bus  
+
+  CAN in the context of automotive vehicle networks:  
   
+  **High speed CAN bus (ISO 11898)**:
+>   + The most popular CAN standard for the physical layer
+>   + Support bit rates from 40 kbit/s to 1 Mbit/s (Classical CAN)
+>   + Provides simple cabling and practically used in all automotive applications today
+>   + The basis for several higher layer protocols such as OBD2, J1939, NMEA 2000, CANopen etc.
+>   + The second generation of CAN is referred to as CAN FD (CAN with Flexible Data-rate)
+
+  **Low speed CAN bus**:
+>   + This standard enables bit rates from 40 kbit/s to 125 kbit/s
+>   + Allows the CAN bus commmunication to continue even if there is a fault on one of the two wires
+>   + It is also referred to as 'fault tolerant CAN'
+>   + In this system, each CAN node has it's own [CAN termination](./images/can_termination.png)  
+
+  **LIN bus**:
+>   + A lower cost supplement to CAN bus networks, with less harness and cheaper nodes
+>   + LIN bus clusters typically consist of a LIN master acting as gateway and up to 16 slave nodes
+>   + Typical use cases: For non-critical vehicle functions like aircondition, door functionality etc.  
+
+  **Automotive ethernet**:
+>   + Support the high bandwidth requirements of ADAS (Advanced Driver Assistance Systems), infotainment systems, cameras etc.  
+>   + Offer much higher data transfer rates vs. CAN bus, but lacks some of the safety/performance features of Classical CAN and CAN FD  
+
+  CAN FD offers three benefits (vs Classical CAN):
+  - It enables data rates up to 8 Mbit/s (vs 1 Mbit/s)
+  - It allows data payloads of up to 64 bytes (vs 8 bytes)
+  - It enables improved security via authentication  
+
   ## 2. Can frames
+  Communication over the CAN bus is done via CAN frames.
   ### 2.1. Standard CAN frame
   The Standard CAN frame with 11 bits identifier (CAN 2.0A) is the type used in most cars.
   ![Standard CAN frame](./images/std_can_frame.png)  
 
-  - **SOF**: The Start of Frame is a 'dominant 0' to tell the other nodes that a CAN node intends to talk  
-  - **ID**: The ID is the frame identifier - lower values have higher priority  
-  - **RTR**: The Remote Transmission Request indicates whether a node sends data or requests dedicated data from another node  
+  - **SOF**: The Start of Frame is a 'dominant 0' to tell the other nodes that a CAN node intends to talk
+  - **ID**: The ID is the frame identifier - lower values have higher priority
+  - **RTR**: The Remote Transmission Request indicates whether a node sends data or requests dedicated data from another node
   - **Control**: The Control contains the Identifier Extension Bit (IDE) which is a 'dominant 0' for 11-bit. It also 
-  contains the 4 bit Data Length Code (DLC) that specifies the length of the data bytes to be transmitted (0 to 8 bytes)  
-  - **Data**: The Data contains the data bytes aka payload, which includes CAN signals that can be extracted and decoded for information  
-  - **CRC**: The Cyclic Redundancy Check is used to ensure data integrity  
-  - **ACK**: The ACK slot indicates if the node has acknowledged and received the data correctly  
+  contains the 4 bit Data Length Code (DLC) that specifies the length of the data bytes to be transmitted (0 to 8 bytes)
+  - **Data**: The Data contains the data bytes aka payload, which includes CAN signals that can be extracted and decoded for information
+  - **CRC**: The Cyclic Redundancy Check is used to ensure data integrity
+  - **ACK**: The ACK slot indicates if the node has acknowledged and received the data correctly
   - **EOF**: The EOF marks the end of the CAN frame  
 
   ## 3. References

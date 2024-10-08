@@ -89,8 +89,11 @@
   ## 2. Can frames
   Communication over the CAN bus is done via CAN frames.
   ### 2.1. Standard CAN frame
-  The Standard CAN frame with 11 bits identifier (CAN 2.0A) is the type used in most cars.
+  The Standard CAN frame with 11 bits identifier (CAN 2.0A) is the type used in most cars.  
+  The extended 29-bit identifier frame (CAN 2.0B) is identical except the longer ID (11-bit Base ID + 18-bit ID Extension).  
+
   ![Standard CAN frame](./images/std_can_frame.png)  
+  *Standard CAN frame*
 
   - **SOF**: The Start of Frame is a 'dominant 0' to tell the other nodes that a CAN node intends to talk
   - **ID**: The ID is the frame identifier - lower values have higher priority
@@ -101,6 +104,22 @@
   - **CRC**: The Cyclic Redundancy Check is used to ensure data integrity
   - **ACK**: The ACK slot indicates if the node has acknowledged and received the data correctly
   - **EOF**: The EOF marks the end of the CAN frame  
+
+  ### 2.2. Remote frame  
+
+  ![Remote frame](./images/can_remote_frame.png)  
+  *Remote frame*  
+
+  ### 2.3. Error frame  
+
+  ![Error frame](./images/can_error_frame.png)  
+  *Error frame*  
+
+  ### 2.4. Overload frame  
+  - Overload frame is transmitted by a node when it is overloaded and needs some time to process the data frame received previously
+  - Overload frame format is same as Error frame
+  - The oveloaded node keeps the bus busy with its overload frame to prevent other nodes to start transmitting data frames
+  - Maximum of 3 consecutive overload frames can be transmitted by each node after a data frame
 
   ## 3. References
   - [CAN Bus - The Ultimate Guide](https://www.csselectronics.com/pages/can-bus-ultimate-guide)

@@ -109,19 +109,39 @@
 
   ![Remote frame](./images/can_remote_frame.png)  
   *Remote frame*  
+  - A node wants a particular Data frame, so it sends the Remote frame with same Message ID on the Bus  
+  - Nowadays Remote frame is obsolete and not used in CAN protocol
 
   ### 2.3. Error frame  
 
   ![Error frame](./images/can_error_frame.png)  
   *Error frame*  
 
+  - If a node detects an error in the data frame being transmitted on the bus currently, then it destroys that data frame and signals all other nodes by transmitting a error frame
+  - The error can be detected by any of the receiver nodes or the transmitter node  
+
   ### 2.4. Overload frame  
   - Overload frame is transmitted by a node when it is overloaded and needs some time to process the data frame received previously
   - Overload frame format is same as Error frame
   - The oveloaded node keeps the bus busy with its overload frame to prevent other nodes to start transmitting data frames
-  - Maximum of 3 consecutive overload frames can be transmitted by each node after a data frame
+  - Maximum of 3 consecutive overload frames can be transmitted by each node after a data frame  
 
-  ## 3. References
+  ## 3. Bus Arbitration  
+  If two nodes try to put different bits on the bus simultaneously, the bus will take the dominant bit value and ignore the Recessive bit  
+  ![Arbitration Field and Control Field](./images/can_arbitration_and_control_fields.png)  
+  *Arbitration Field and Control Field*  
+  - Bit wise arbitration across the Arbitration Field  
+  - Dominant Bus Level = 0, Recessive Bus Level = 1  
+
+  ![An example of CAN Bus arbitration](./images/can_ex_bus_arbitration.jpg)  
+  *An example of CAN Bus arbitration*  
+  - CAN bus is considered idle after the transmission of a message followed by the Intermission Field
+  - Intermission Field: After the ACK field, there is a time period known as the Intermission Field 
+  (This is typically 3.5 bit times long and serves as a mandatory gap between two messages)  
+  - Node that transmits message with lowest ID (highest priority) wins arbitration, continues to transmit. Competing nodes switch to receiving mode
+  - Nodes that lost arbitration will start new arbitration as soon as bus is free for access again => No message gets lost
+
+  ## 4. References
   - [CAN Bus - The Ultimate Guide](https://www.csselectronics.com/pages/can-bus-ultimate-guide)
   - [Document Title Specification of CAN Driver](https://www.autosar.org/fileadmin/standards/R22-11/CP/AUTOSAR_SWS_CANDriver.pdf)
   

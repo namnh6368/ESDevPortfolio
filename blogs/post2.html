@@ -1,0 +1,128 @@
+<!-- blogs/post1.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" type="image/png" href="./images/favicon.png" />
+  
+    <!-- Put your site title here -->
+    <title>
+      Nam Nguyen Hoang | AUTOSAR Keynotes.
+    </title>
+  
+    <meta name="description" content="AUTOSAR Keynotes.">
+    <!-- Add some coding keywords below, Ex: (React, CSS etc) -->
+    <meta name="keywords" content="AUTOSAR" />
+    <link rel="stylesheet" href="./blog.css" />
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+</head>
+
+<body>
+
+  <!-- ***** Header ***** -->
+
+  <header class="header" role="banner" id="top">
+    <div class="header__text-box row">
+      <div class="header__text">
+        <h1 class="heading-primary">
+          <span>AUTOSAR Keynotes</span>
+        </h1>
+        <p>Nam Nguyen Hoang.</p>
+        <a href="../index.html" class="btn">Back to Portfolio</a>
+      </div>
+    </div>
+  </header>
+
+  <div id="content"></div>
+  
+  <script>
+    // The Markdown content
+    const markdown = `
+  ## 1. AUTOSAR Application  
+  
+  ## 2. AUTOSAR RTE  
+  
+  ## 3. AUTOSAR BSW    
+  
+  ## 4. AUTOSAR Methodology    
+
+  ## 5. AUTOSAR in Practice  
+  ### 5.1. Busses  
+  - Bus access methods:  
+  **Master-Slave method:**  
+
+  > - Master ECU controls data transmission on the bus  
+  > - Slave ECUs may only respond to requests by the Master ECU  
+  > - Example: **LIN** bus  
+
+  **Event-driven method:**
+  > - Any ECU can access the available bus at any time  
+  > - Priority assignments makes it possible to control message traffic  
+  > - Example: **CAN** bus, **Ethernet**  
+
+  **Time-synchronous method:**
+  > - Sending process occurs in periodic time windows
+  > - Time windows are allocated to the individual ECUs  
+  > - Example: **FlexRay**, **TTCAN**  
+
+  **Token passing method:**  
+  > - Send authorization (Token) is passed from one ECU to the next  
+  > - Sending is only possible with send authorization  
+  > - Examples: Token ring, Profibus  
+
+  #### 5.1.1. LIN bus
+  ![CAN - LIN in AUTOSAR version 4.0](./images/can_lin.png)  
+  *CAN - LIN in AUTOSAR version 4.0*  
+
+  ***a. LIN BSW Modules:***
+
+  **LIN DRV**
+  - Low level driver for LIN communication via SCI/UART of the microcontroller
+  - Initialization of SCI Hardware
+  - API for generating LIN Synch break
+
+  **LIN TRCV**
+  - Driver for external LIN Transceiver
+  - Control of wakeup/sleep
+  - Network diagnostics (short circuit, open line, ...)
+
+  **LIN IF/TP**
+  - Schedule table implementation
+  - Transmission/Reception of LIN frames
+  - Sleep/Wakeup/Error/Timeout Handling
+  - Transport Protocol for Diagnostics
+
+  **LIN SM**
+  - Schedule requests, set transceiver mode, control wakeup and sleep
+
+  **LIN NM**
+  - Manage Network Mode or Sleep Mode, Transmit NM message
+  - Provide Interface to NM
+  - Coordinator functionality
+
+  ***b. Network Description:***  
+
+  ![LIN Network Description](./images/lin_nw_desc.png)  
+  *LIN Network Description*  
+
+  - The LIN Description File (LDF) describes a LIN network using the language defined in the LIN Configuration Language Specification
+  - The LDF contains information relevant to network development and analysis:
+    > - Global information such as baudrate and versions
+    > - Information on nodes, signals and frames, sender and receiver
+    > - Schedule
+
+  ---
+  
+  > "The best time to plant a tree was 20 years ago. The second best time is now."
+  `;
+  
+    // Convert Markdown to HTML
+    document.getElementById('content').innerHTML = marked.parse(markdown);
+  </script>
+  
+</body>
+</html>

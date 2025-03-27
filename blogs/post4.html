@@ -1,0 +1,220 @@
+<!-- blogs/post1.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" type="image/png" href="./images/favicon.png" />
+  
+    <!-- Put your site title here -->
+    <title>
+      Nam Nguyen Hoang | AUTOSAR Communication Stack (COM stack).
+    </title>
+  
+    <meta name="description" content="AUTOSAR Communication Stack (COM stack).">
+    <!-- Add some coding keywords below, Ex: (React, CSS etc) -->
+    <meta name="keywords" content="COM stack" />
+    <link rel="stylesheet" href="./blog.css" />
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+</head>
+
+<body>
+
+  <!-- ***** Header ***** -->
+
+  <header class="header" role="banner" id="top">
+    <div class="header__text-box row">
+      <div class="header__text">
+        <h1 class="heading-primary">
+          <span>AUTOSAR Communication Stack (COM stack)</span>
+        </h1>
+        <p>Nam Nguyen Hoang.</p>
+        <p>(22/02/2024)</p>
+        <a href="../index.html" class="btn">Back to Portfolio</a>
+      </div>
+    </div>
+  </header>
+
+  <div id="content"></div>
+  
+  <script>
+    // The Markdown content
+    const markdown = `
+  ## 1. AUTOSAR architecture
+  
+  ![AUTOSAR architecture](./images/autosar_architecture.png)  
+  *AUTOSAR architecture*
+
+  AUTOSAR is an AUTomotive Open System ARchitecture used to develop the software architecture for an ECU.
+  It consists of 3 layers:
+  - **Application layer**: Contain the application software called Software Components (SWC).
+  - **RTE (Run-Time Environment) layer**: Provide an interface and enables communication between the Basic Software (BSW) and the application layer.  
+  RTE separates the application layer from the BSW and enables the Inter ECU and Intra ECU communication.  
+  RTE works on Virtual Bus Communication (VFB) that provides the mechanism to connect all these components (SWC, BSW) and enables communication.
+  - **Basic software layer**: Provide a hardware-independent abstraction to the upper layer.  
+  BSW has 3 layers:  
+    - **- System Service Layer**: Provide communication services, memory services, ECU mode management, state management, and diagnostic services.  
+    It also contains an Operating System (OS) for task scheduling and prioritization.
+    - **- ECU Abstraction Layer**: It interfaces and abstracts the drivers of MCAL and makes the higher software layer independent of the ECU hardware.  
+    It also contains the drivers for external devices.
+    - **- Microcontroller Abstraction Layer (MCAL)**: It interfaces and abstracts the hardware of the ECU.  
+    MCAL provides standardized interfaces to the microcontroller peripherals and devices, ensuring that the upper layers of the software stack can operate independently of the specific microcontroller hardware.  
+    It includes drivers for various microcontroller components such as ADC, PWM, I/O ports, communication interfaces (CAN, LIN, SPI, etc.), and watchdog timers.  
+
+    ![AUTOSAR architecture in details](./images/autosar_architecture_in_details.png)  
+    *AUTOSAR architecture in details*
+  
+  ## 2. COM stack
+  <img src="./images/autosar_comstack.png" alt="AUTOSAR COM stack" style="width: 50%; height: auto;">
+  <br>
+  <em>AUTOSAR COM stack</em>
+
+  - AUTOSAR provides communication services through ComStack. It is a part of the BSW layer.
+  - In AUTOSAR, information/data is transmitted and received in terms of signals and PDUs (Protocol Data Units)  
+  Signals in AUTOSAR are used at the application layer, where the Software Components (SWC) exchange information/data with the RTE in terms of signals. For examples:  
+    - **- Engine Speed**: The current speed of the engine in RPM.
+    - **- Vehicle Speed**: The speed at which the vehicle is traveling.
+    - **- Fuel Level**: The amount of fuel remaining in the tank.
+    - **- Throttle Position**: The position of the throttle pedal.
+    - **- Brake Pressure**: The pressure applied to the brake system.
+    - **- Steering Angle**: The angle of the steering wheel.
+    - **- Battery Voltage**: The voltage level of the vehicle's battery.
+    - **- Ambient Temperature**: The temperature outside the vehicle.  
+  These signals are then mapped to specific PDUs in the service layer, which ensures that the data is correctly formatted and transmitted to the appropriate lower layers.  
+  PDUs (Protocol Data Units) encapsulate signals and include additional information such as source and destination addresses, protocol-specific control information, and error-checking codes.  
+  They are used throughout the communication stack to ensure that signals are transmitted reliably and can be correctly interpreted by another ECU or a specific software component within the same ECU.
+  - Each layer has its PDU.  
+  For example, while transmitting from the service layer to the ECU abstraction layer, the service layer adds PCI (Protocol Control Information) into the PDU
+  that helps the abstraction layer to understand it and its contents.
+
+  ### 2.1. Service layer
+  Service layer provides communication and management services that include the following modules:
+  - AUTOSAR COM
+  - PDU Router (PDUR)
+  - BUSTP
+  - BUSSM
+  - BUSNM
+  - Generic NM
+  - IpduM
+
+  ### 2.2. ECU abstraction layer
+  This layer contains the driver for an external device and transceivers such as an external CAN controller, external ADC, CAN transceiver driver, and FlexRay transceiver driver.
+  - BUS Interface (CANIF, LINIF, FRIF, ETHIF, etc.)
+  - Transceiver Driver (CANTRCV, LINTRCV, FRTRCV, ETHTRCV, etc.)
+  - External Device Driver (CAN, LIN, FR, ETH, etc.)
+
+  ### 2.3. MCAL
+  This layer contains communication drivers that are protocol/BUS-specific and directly accesses the hardware to offer the hardware-independent API to an upper layer.
+  - CAN Driver
+  - LIN Driver
+  - FlexRay Driver
+  - Ethernet Driver
+
+  ## 3. CAN stack
+  <img src="./images/autosar_canstack.png" alt="AUTOSAR CAN stack" style="width: 50%; height: auto;">
+  <br>
+  <em>AUTOSAR CAN stack</em>
+
+  - The CAN stack is a part of the COM stack that provides communication services over the CAN bus.
+  - The CAN stack consists of the following layers:
+    - **- CAN Transport Layer (CAN TP)**: It provides the services for segmented transmission and reception of large data packets over the CAN bus.
+    - **- CAN Network Management Layer (CAN NM)**: It provides the services for network management, including bus-off recovery, node guarding, and network availability management.
+    - **- CAN Interface Layer (CAN IF)**: It provides the services for the initialization and configuration of the CAN controller hardware.
+    - **- CAN Driver Layer (CAN Driver)**: It provides the services for the low-level interaction with the CAN controller hardware, including message transmission and reception.
+
+  The following modules are required for the BSW configuration of the CAN Communication stack:
+  - ECUC (ECU Configuration)
+  - AUTOSAR COM
+  - PDU Router (PDUR)
+  - CAN Interface (CANIF)
+  - CAN Driver
+  - Port Driver
+
+  ### 3.1. ECUC
+  It defines the number of PDUs used in the ECU for commnication and it contains the PDU name, data type, and length (DLC).  
+  For example a few basic configuration parameters are:
+  - PDU length: mentioned in bytes.
+  - Data type: mentioned as UINT8, UINT16, FLOAT32, etc.
+
+  ### 3.2. AUTOSAR COM
+  - COM module defines four different types of an object for the communication system: I-PDUs, I-PDU Groups, Signals, and Signal Groups.
+  - I-PDU is an interaction layer protocol data unit that contains the signals that have been received from an upper layer or a lower layer. 
+  The collection of multiple I-PDUs that follow the same direction (either received or transmitted) is called the I-PDU groups.
+  - Signal is a data element that is transmitted from one ECU to another ECU.
+  - Signal groups are used to define the complex data types in AUTOSAR that contains one or more data elements.  
+  The basic configuration required:  
+  <img src="./images/autosar_comstack_COM_configuration.png" alt="COM configuration" style="width: 50%; height: auto;">
+  <br>
+  <em>COM configuration</em>
+
+  ### 3.3. PDU Router (PDUR)
+  The PDUR module is responsible for routing I-PDUs within the CAN communication stack. This involves configuring a routing table that specifies the source and destination of each I-PDU.  
+  The basic configuration required:  
+  <img src="./images/autosar_comstack_PDUR_configuration.png" alt="PDUR configuration" style="width: 50%; height: auto;">
+  <br>
+  <em>PDUR configuration</em>
+
+  ### 3.4. CAN Transport Protocol (CANTP)
+  CANTP is used to segment and reassemble the CAN I-PDUs that are longer than 8-bytes for the standard CAN and 64 bytes for CAN FD.  
+  It also handles TP frames i.e., Single Frame (SF), First Frame (FF), Flow Control (FC), and Consecutive Frame (CF). 
+  It receives the I-PDUs from the PDUR and links those I-PDUs to the N-PDUs. It later sends the N-PDUs to the CAN Interface.  
+
+  ### 3.5. CAN Interface (CANIF)
+  CAN Interface receives information from the service layer (PDUR/ CAN TP) during the transmission and receives L-PDUs from MCAL (CAN driver) during the reception.  
+  At CANIF, it maps the incoming PDUs from PDUR/CANTP to Hardware Object Handle (HOH) and vice versa.  
+  It has two different hardware object handles for transmission and reception (HRH & HTH) that are mapped to an associated PDU.  
+  It receives the I-PDUs from PDUR or the N-PDUs from CANTP, prepares the L-PDUs, and sends them to the CAN driver.  
+  The basic configuration required:  
+  <img src="./images/autosar_canstack_canif.png" alt="CANIF configurations" style="width: 50%; height: auto;">
+  <br>
+  <img src="./images/autosar_canstack_canif_1.png" alt="CANIF configurations (cont.)" style="width: 50%; height: auto;">
+  <br>
+  <em>CANIF configurations</em>
+
+  ### 3.6. CAN State Manager (CANSM)
+  CANSM is used to identify the network in the ECU. An ECU may have multiple networks and each network has a unique network handle.  
+  Each network works in different modes of communication and those modes are requested by the ComM module through CANSM (in case of CAN).  
+  It helps to change the mode of communication depending on the request. It also defines the time duration for the BUS off control.  
+  The basic configuration required:  
+  <img src="./images/autosar_canstack_cansm.png" alt="CANSM configurations" style="width: 50%; height: auto;">
+  <br>
+  <em>CANSM configurations</em>
+
+  ### 3.7. CAN Driver
+  CAN driver is responsible for initiating transmissions and notifying events when any data is received or given acknowledgment in feedback for data transmission.  
+  Multiple CAN controllers can be controlled by one CAN module if they belong to the same CAN hardware unit.  
+  (*CAN Hardware unit may have more than one CAN controller of the same type and it has one CAN driver).  
+  The basic configuration required:  
+  <img src="./images/autosar_canstack_candrv.png" alt="CANDRV configurations" style="width: 50%; height: auto;">
+  <br>
+  <em>CAN driver configurations</em>
+
+  ### 3.8. Port Driver
+  It is responsible for the initialization of the port structure of the microcontroller.  
+  It defines the direction and functionality of the port pin.  
+  The configuration needed for CAN controller pins is: Microcontroller dependent for channel and alternate function selection:  
+  - CAN_RX (Receive pin)
+  - CAN_TX (Transmit pin)
+
+  ## 4. PDU at each layer
+  <img src="./images/autosar_canstack_pdu_types.png" alt="PDU types" style="width: 50%; height: auto;">
+  <br>
+  <em>PDU types</em>
+
+  ## 4. References
+  - [AUTOSAR Specification of Communication - R24-11](https://www.autosar.org/fileadmin/standards/R24-11/CP/AUTOSAR_CP_SWS_COM.pdf)
+  - [Understanding AUTOSAR Architecture and AUTOSAR COMSTACK](https://www.einfochips.com/resources/publications/understanding-autosar-architecture-and-autosar-comstack/)
+  ---
+  
+  > "The best time to plant a tree was 20 years ago. The second best time is now."
+  `;
+  
+    // Convert Markdown to HTML
+    document.getElementById('content').innerHTML = marked.parse(markdown);
+  </script>
+  
+</body>
+</html>

@@ -33,16 +33,14 @@
     <div class="row">
       <nav class="nav" role="navigation">
         <ul class="nav__items">
-          <li class="nav__item"><a href="#work" class="nav__link">Work Experience</a></li>
-          <li class="nav__item"><a href="#education" class="nav__link">Education</a></li>
           <li class="nav__item">
             <a href="#about" class="nav__link">About</a>
           </li>
+          <li class="nav__item"><a href="#work" class="nav__link">Work Experience</a></li>
+          <li class="nav__item"><a href="#education" class="nav__link">Education</a></li>
+          <li class="nav__item"><a href="#blog" class="nav__link">Blogs</a></li>
           <li class="nav__item">
             <a href="#contact" class="nav__link">Contact</a>
-          </li>
-          <li class="nav__item">
-            <a href="#blog" class="nav__link">Blogs</a>
           </li>
         </ul>
       </nav>
@@ -61,6 +59,33 @@
   </header>
 
   <main role="main">
+
+    <!-- ***** About ***** -->
+
+    <section class="about" id="about">
+      <div class="row">
+        <h2>About Me</h2>
+        <div class="about__content">
+          <div class="about__text">
+            <!-- Replace the below paragraph with info about yourself -->
+            <p>
+              Glad to see you here.<br>
+              This is my personal website where I share my experiences and notes about embedded software development.<br>
+              <br>
+              I am an embedded software developer with experience in automotive domain.<br>
+              I have good knowledge in AUTOSAR layered architecture and especially in the driver development.<br>
+              With a great passion and experience in Embedded system (Power mode, Interrupt, Boot process, ...), memory layout, communication prototol (Ethernet, LIN, I2C, ...), <br>
+              I strive to improve my knowledge and develop my career path everyday.
+            </p>
+          </div>
+
+          <div class="about__photo-container">
+            <!-- Add a nice photo of yourself -->
+            <img class="about__photo" src="./images/namnh6368.jpg" alt="" />
+          </div>
+        </div>
+      </div>
+    </section>
 
     <!-- ***** Work ***** -->
 
@@ -132,31 +157,6 @@
       </div>
     </section>
 
-    <!-- ***** About ***** -->
-
-    <section class="about" id="about">
-      <div class="row">
-        <h2>About Me</h2>
-        <div class="about__content">
-          <div class="about__text">
-            <!-- Replace the below paragraph with info about yourself -->
-            <p>
-              Glad to see you here.<br>
-              I am an embedded software developer with experience in automotive domain.<br>
-              I have good knowledge in AUTOSAR layered architecture and especially in the driver development.<br>
-              With a great passion and experience in Embedded system (Power mode, Interrupt, Boot process, ...), memory layout, communication prototol (Ethernet, LIN, I2C, ...), <br>
-              I strive to improve my knowledge and develop my career path everyday.
-            </p>
-          </div>
-
-          <div class="about__photo-container">
-            <!-- Add a nice photo of yourself -->
-            <img class="about__photo" src="./images/namnh6368.jpg" alt="" />
-          </div>
-        </div>
-      </div>
-    </section>
-
     <!-- ***** Blogs ***** -->
 
     <section class="blog" id="blog">
@@ -169,6 +169,7 @@
                   <li><a href="blogs/post1.html">Controller Area Network (CAN)</a></li>
                   <li><a href="blogs/post2.html">AUTOSAR Keynotes</a></li>
                   <li><a href="blogs/post3.html">Automotive Cybersecurity Keynotes</a></li>
+                  <li><a href="blogs/post4.html">AUTOSAR Communication Stack (COM stack)</a></li>
               </ul>
             </nav>
           </div>
@@ -189,6 +190,7 @@
         </p>
         <!-- Replace the email with yours -->
         <a href="mailto:nhnam203@gmail.com" class="btn">nhnam203@gmail.com</a>
+        <a href="https://www.linkedin.com/in/nhnam69/" class="btn">Connect on LinkedIn</a>
       </div>
     </div>
   </section>
@@ -205,7 +207,7 @@
           </a>
         </li>
         <li class="footer__social-link-item">
-          <a href=https://www.linkedin.com/in/nhnam69/">
+          <a href=https://www.linkedin.com/in/nhnam69/ title="Link to Linkedin Profile">
             <img src="./images/linkedin.svg" title="Link to Linkedin Profile" class="footer__social-image" alt="Linkedin">
           </a>
         </li>

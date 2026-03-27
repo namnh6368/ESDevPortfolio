@@ -1,0 +1,296 @@
+<!-- blogs/post5_rtos.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" type="image/png" href="./images/favicon.png" />
+  
+    <!-- Put your site title here -->
+    <title>
+      Nam Nguyen Hoang | Real-Time Operating Systems (RTOS) in Automotive.
+    </title>
+  
+    <meta name="description" content="Real-Time Operating Systems (RTOS) in Automotive.">
+    <!-- Add some coding keywords below, Ex: (React, CSS etc) -->
+    <meta name="keywords" content="RTOS" />
+    <link rel="stylesheet" href="./blog.css" />
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+</head>
+
+<body>
+
+  <!-- ***** Header ***** -->
+
+  <header class="header" role="banner" id="top">
+    <div class="header__text-box row">
+      <div class="header__text">
+        <h1 class="heading-primary">
+          <span>Real-Time Operating Systems (RTOS) in Automotive</span>
+        </h1>
+        <p>Nam Nguyen Hoang.</p>
+        <p>(11/02/2025)</p>
+        <a href="../index.html" class="btn">Back to Portfolio</a>
+      </div>
+    </div>
+  </header>
+
+  <div id="content"></div>
+  
+  <script>
+    // The Markdown content
+    const markdown = `
+  ## 1. RTOS Overview
+  
+  <img src="./images/rtos_overview.jpg" alt="RTOS Overview" style="width: 40%; height: 40%;">
+  <br>
+  <em>RTOS Overview</em>
+
+  - A Real-Time Operating System (RTOS) is a specialized OS designed to guarantee deterministic and predictable behavior. 
+  - Tasks are executed within precise timing constraints, essential for automotive safety and performance-critical functions.
+
+  <img src="./images/rtos_key_roles.png" alt="RTOS Key Roles in Automotive Systems" style="width: auto; height: auto;">
+  <br>
+  <em>RTOS Key Roles in Automotive Systems</em>
+  
+  ## 2. Commonly Used RTOS in Automotive
+
+  <img src="./images/rtos_used_types.png" alt="Commonly Used RTOS in Automotive Systems" style="width: auto; height: auto;">
+  <br>
+  <em>Commonly Used RTOS in Automotive Systems</em>
+
+  Example of AUTOSAR OS Architecture:
+  1. Application Layer - Runnable entities (SWCs) 
+  2. RTE (Runtime Environment) - Middleware that maps SWCs to OS tasks 
+  3. Basic Software (BSW) - Includes the OS, communication stacks (CAN, LIN, FlexRay), and MCAL 
+  4. Microcontroller Abstraction Layer (MCAL) - Hardware drivers interfacing directly to MCU 
+
+  ## 3. RTA-OS
+
+  ## 4. An example of braking system with RTA-OS
+
+    /*************************************************************************
+     * SYSTEM:     ESC Brake Control ECU
+     * MCU:        Renesas RH850/P-Series
+     * OS:         ETAS RTA-OS (AUTOSAR Classic)
+     * CONTEXT:    ASIL D Safety System
+     *************************************************************************/
+    
+    // --- 1. Global Object Definitions (Configured in RTA-CAR) ---
+    
+    // -- OS-Applications (for MPU Protection) --
+    OS-Application App_Safety_ASIL_D; // Will own critical tasks/memory
+    OS-Application App_Comms_ASIL_B;   // Will own CAN/Diag tasks/memory
+    
+    // -- RTOS Tasks --
+    // OS-Application: App_Safety_ASIL_D
+    Task Task_ReadSensors_2ms;     // Highest pri, periodic, reads local sensors
+    Task Task_ESC_Algorithm_10ms;  // High pri, periodic, core safety logic
+    Task Task_ActuatorControl_5ms; // High pri, periodic, controls brake valves
+    
+    // OS-Application: App_Comms_ASIL_B
+    Task Task_ProcessCAN_RX;       // Event-driven, medium pri, for steering angle
+    Task Task_Diagnostics_100ms;   // Low pri, periodic, for fault handling
+    
+    // -- Synchronization Objects --
+    // Mutex for protecting shared state data
+    Mutex Mutex_VehicleState;
+    
+    // Semaphore for signaling from CAN ISR to Task
+    BinarySemaphore Sem_SteeringAngleReady;
+    
+    // -- Shared Data (Protected by Mutex) --
+    struct {
+        float yawRate;
+        float wheelSpeed_FL, wheelSpeed_FR, wheelSpeed_RL, wheelSpeed_RR;
+        float steeringAngle;
+    } g_VehicleState;
+    
+    // -- Actuator Commands --
+    struct {
+        float pressure_FL, pressure_FR, pressure_RL, pressure_RR;
+    } g_BrakeCommands;
+    
+    
+    /*************************************************************************
+     * MAIN ENTRY
+     *************************************************************************/
+    int main(void) {
+        // 1. Initialize RH850 hardware (clocks, MPU, lock-step cores)
+        Mcu_Init();
+        
+        // 2. Initialize all BSW modules (CAN, ADC, PWM, Diagnostics)
+        Bsw_Init_All();
+    
+        // 3. Start RTA-OS
+        // This call never returns. The OS takes control of the CPU.
+        // The OS will start the tasks based on their configured priorities.
+        StartOS(OS_CORE_0); 
+        
+        return 0; // Should never be reached
+    }
+    
+    
+    /*************************************************************************
+     * ISR (Interrupt Service Routines)
+     *************************************************************************/
+    
+    // ISR for CAN-FD Message Reception (Hardware Interrupt)
+    // This ISR is part of App_Comms_ASIL_B but configured to be "trusted".
+    ISR(CAN_RX_ISR) {
+        // Hardware-level 'clear interrupt flag'
+        Clear_CAN_RX_Flag();
+        
+        // Check if it's the steering angle message (0x1A0)
+        if (Get_CAN_Message_ID() == 0x1A0) {
+            // Signal the task. DO NOT process data here.
+            // This is a non-blocking call.
+            Signal(Sem_SteeringAngleReady);
+        }
+    }
+    
+    
+    /*************************************************************************
+     * ASIL B TASKS (in App_Comms_ASIL_B)
+     * (MPU configuration loaded by RTA-OS: Can only access its own
+     * RAM, the CAN registers, and Sem_SteeringAngleReady)
+     *************************************************************************/
+    
+    // This task waits for the CAN ISR signal, then updates the steering angle
+    TASK(Task_ProcessCAN_RX) {
+        for(;;) {
+            // Wait forever until the ISR signals us
+            Wait(Sem_SteeringAngleReady);
+            
+            // --- Critical Section (Protected by Mutex) ---
+            // Lock the mutex to gain exclusive access to g_VehicleState
+            Lock(Mutex_VehicleState);
+            
+            // Now it's safe to write.
+            // The MPU for this task *is* given write access to this one struct.
+            g_VehicleState.steeringAngle = Read_CAN_Data_Buffer();
+            
+            // Release the lock so other tasks can run
+            Unlock(Mutex_VehicleState);
+            // --- End Critical Section ---
+        }
+    }
+    
+    // Low-priority background task
+    TASK(Task_Diagnostics_100ms) {
+        for(;;) {
+            // Run diagnostics, check for faults
+            Run_Diagnostic_Checks();
+            
+            // This task is *not* given MPU permission to touch g_VehicleState.
+            // If it tried: g_VehicleState.yawRate = 0;
+            // ...the RH850's MPU would trigger a hardware fault.
+            
+            // Sleep for 100ms
+            Sleep(100);
+        }
+    }
+    
+    
+    /*************************************************************************
+     * ASIL D TASKS (in App_Safety_ASIL_D)
+     * (MPU configuration loaded by RTA-OS: Has full access to its own
+     * RAM, sensor registers, and g_VehicleState)
+     *************************************************************************/
+    
+    // Highest priority task: reads sensors connected to this ECU
+    TASK(Task_ReadSensors_2ms) {
+        for(;;) {
+            // Read from RH850's peripherals (e.g., ADC, SPI)
+            float yaw = Read_Yaw_Rate_Sensor();
+            float wfl = Read_Wheel_Speed_ADC(FL);
+            float wfr = Read_Wheel_Speed_ADC(FR);
+            float wrl = Read_Wheel_Speed_ADC(RL);
+            float wrr = Read_Wheel_Speed_ADC(RR);
+    
+            // --- Critical Section (Protected by Mutex) ---
+            Lock(Mutex_VehicleState);
+            
+            // Safely update the global state
+            g_VehicleState.yawRate       = yaw;
+            g_VehicleState.wheelSpeed_FL = wfl;
+            g_VehicleState.wheelSpeed_FR = wfr;
+            g_VehicleState.wheelSpeed_RL = wrl;
+            g_VehicleState.wheelSpeed_RR = wrr;
+            
+            Unlock(Mutex_VehicleState);
+            // --- End Critical Section ---
+            
+            // Sleep for 2ms
+            Sleep(2);
+        }
+    }
+    
+    // The core ESC logic task
+    TASK(Task_ESC_Algorithm_10ms) {
+        for(;;) {
+            // --- Critical Section (Protected by Mutex) ---
+            // Lock the state to ensure a 100% consistent (atomic) read
+            Lock(Mutex_VehicleState);
+            
+            // Copy the data into a local struct for processing
+            VehicleState_t localState = g_VehicleState;
+            
+            // Unlock immediately so other tasks aren't blocked
+            Unlock(Mutex_VehicleState);
+            // --- End Critical Section ---
+    
+            // ** RUN THE ASIL D SAFETY ALGORITHM **
+            // (This complex logic is from the Simulink model)
+            if (Is_Oversteer(localState.yawRate, localState.steeringAngle) == TRUE) {
+                g_BrakeCommands.pressure_FL = 50.0; // Apply corrective braking
+                g_BrakeCommands.pressure_FR = 0.0;
+                // ... etc.
+            } else {
+                // No intervention
+                g_BrakeCommands = {0, 0, 0, 0};
+            }
+            
+            // Checkpoint with the watchdog to prove we are alive
+            WdgM_Checkpoint();
+    
+            // Sleep for 10ms
+            Sleep(10);
+        }
+    }
+    
+    // This task just applies the brake commands calculated by the algorithm
+    TASK(Task_ActuatorControl_5ms) {
+        for(;;) {
+            // This task just reads g_BrakeCommands (no mutex needed if only
+            // one task writes to it and one task reads it, and the data
+            // is small enough for an atomic read/write).
+            
+            // Set the RH850's PWM/timer outputs for the hydraulic valves
+            Set_Brake_Valve_PWM(FL, g_BrakeCommands.pressure_FL);
+            Set_Brake_Valve_PWM(FR, g_BrakeCommands.pressure_FR);
+            Set_Brake_Valve_PWM(RL, g_BrakeCommands.pressure_RL);
+            Set_Brake_Valve_PWM(RR, g_BrakeCommands.pressure_RR);
+            
+            // Sleep for 5ms
+            Sleep(5);
+        }
+    }
+
+  ## References
+  - [RTOS - Rakesh Pant](https://www.linkedin.com/posts/rakesh-embedded_rtos-embeddedsystems-edtech-activity-7382981296702140416-0Rgo?utm_source=share&utm_medium=member_desktop&rcm=ACoAADo6YDYBuPUZ92Dxjnn3_XrVSjS7izo26_A)
+  
+  ---
+  
+  > "The best time to plant a tree was 20 years ago. The second best time is now."
+  `;
+  
+    // Convert Markdown to HTML
+    document.getElementById('content').innerHTML = marked.parse(markdown);
+  </script>
+  
+</body>
+</html>
